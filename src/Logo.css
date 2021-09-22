@@ -1,0 +1,17 @@
+@import url("https://rsms.me/inter/inter.css");
+
+* {
+    font-family: "Inter";
+    font-weight: 600;
+}
+
+#logoMain {
+    min-height: 256px;
+    height: auto;
+    width: auto;
+}
+
+#text {
+    font-family: "Garamond";
+    font-size: xx-large;
+}
