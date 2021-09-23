@@ -11,10 +11,12 @@ import {
   Stack,
   InputGroup,
   createStandaloneToast,
+  Flex
 } from "@chakra-ui/react"
 import { ColorModeSwitcher } from "./ColorModeSwitcher"
 import "./Logo.css"
 import domtoimage from 'dom-to-image';
+import { saveAs } from 'file-saver'
 import { Info } from "./index"
 const toast = createStandaloneToast()
 
@@ -23,13 +25,24 @@ class Logo extends React.PureComponent {
     color: "#1b1b7a",
     text: "",
     height: {
-      value: "",
+      value: 512,
       isInvalid: false
     },
-    width: "",
+    width: 317,
     bgColor: "white",
     svg: false,
     png: false,
+    divStyle: {
+      maxWidth: null,
+      height: null,
+      width: null
+    },
+    boxStyle: {
+      maxHeight: null,
+      maxWidth: null,
+      overflow: "clip"
+    },
+    fontSize: 33
   }
 
   handleInput(type: string, input: any) {
@@ -41,8 +54,7 @@ class Logo extends React.PureComponent {
     if (type === "height") {
       let str = input.target.value
       let invalid: boolean = false
-      let num
-
+      let num: number | any
       if (str.includes("px")) {
         let temp = str.replace("px", "")
         if (isNaN(Number(temp))) invalid = true
@@ -53,7 +65,7 @@ class Logo extends React.PureComponent {
         num = Number(temp)
       }
       let out = num + "px"
-      this.setState({ height: { value: out, isInvalid: invalid }, width: (input.target.value * 0.619140625) })
+      this.setState({ height: { value: out, isInvalid: invalid }, width: num * 0.619140625 })
     }
     if (type === "color") {
       let data = input.target.value
@@ -75,7 +87,6 @@ class Logo extends React.PureComponent {
     }
   }
 
-
   render() {
     return (
       <ChakraProvider theme={theme}>
@@ -83,10 +94,17 @@ class Logo extends React.PureComponent {
           <Grid minH="100vh" p={3}>
             <ColorModeSwitcher justifySelf="flex-end" />
             <VStack spacing={10}>
-              <Box style={{ overflow: "clip" }} maxHeight="512px" maxWidth="303.72px" padding="16px" bg={this.state.bgColor} borderRadius="lg">
-                <div id="artboard">
-                  <VStack spacing={0}>
-                    <svg id="logoMain" style={{ "fillRule": "evenodd", "clipRule": "evenodd", "strokeLinejoin": "round" }} version="1.1" viewBox="0 0 1321 2134" xmlns="http://www.w3.org/2000/svg" xmlSpace="preserve">
+              <Box style={this.state.boxStyle} padding="16px" bg={this.state.bgColor} borderRadius="lg">
+                <div style={this.state.divStyle} id="artboard">
+                  <Flex direction="column">
+                    <svg id="logoMain" style={{
+                      minHeight: "256px",
+                      height: "auto",
+                      width: "auto",
+                      "fillRule": "evenodd",
+                      "clipRule": "evenodd",
+                      "strokeLinejoin": "round"
+                    }} version="1.1" viewBox="0 0 1321 2134" xmlns="http://www.w3.org/2000/svg" xmlSpace="preserve">
                       <rect height="2133.33" id="Artboard1" style={{ "fill": "none" }} width="1320.83" x="-0" y="0" />
                       <clipPath id="_clip1">
                         <rect height="2133.33" width="1320.83" x="-0" y="0" />
@@ -101,8 +119,8 @@ class Logo extends React.PureComponent {
                         </g>
                       </g>
                     </svg>
-                    <div style={{ color: this.state.color }} id="text">{this.state.text}</div>
-                  </VStack>
+                    <div style={{ color: this.state.color, fontFamily: "Garamond", fontWeight: "normal", fontSize: this.state.fontSize }} id="text">{this.state.text}</div>
+                  </Flex>
                 </div>
               </Box>
               <VStack>
@@ -123,7 +141,15 @@ class Logo extends React.PureComponent {
               </VStack>
               <Stack direction="row" spacing={4}>
                 <Button loadingText="Downloading" colorScheme="teal" variant="solid" isLoading={this.state.png} onClick={() => {
-                  this.setState({ png: true })
+                  this.setState({
+                    png: true,
+                    divStyle: {
+                      maxWidth: this.state.width,
+                      height: this.state.height.value,
+                      width: this.state.width
+                    },
+                    fontSize: this.state.width / 4.803030303030303
+                  })
                   toast({
                     title: "Downloading....",
                     description: "Your download will start shortly",
@@ -131,7 +157,31 @@ class Logo extends React.PureComponent {
                     duration: 5000,
                     position: "bottom-left",
                   })
-                }}> {/* isLoading to make loading animation */}
+                  // Downloading
+                  console.log(this.state.height.value)
+                  console.log(this.state.width)
+                  //@ts-ignore
+                  domtoimage.toPng(document.getElementById("artboard"))
+                    .then((data) => {
+                      saveAs(data, "HIRA.png")
+                      this.setState({
+                        png: false,
+                        divStyle: {
+                          maxWidth: 158.5,
+                          height: null,
+                          width: null
+                        }
+                      })
+                    })
+                    .catch((error) => {
+                      toast({
+                        title: "an error has occured",
+                        status: "error",
+                        isClosable: true,
+                      })
+                      console.error(error);
+                    });
+                }}>
                   Download
                 </Button>
                 <Button
@@ -140,10 +190,41 @@ class Logo extends React.PureComponent {
                   variant="outline"
                   isLoading={this.state.svg}
                   onClick={() => {
-                    this.setState({ svg: true })
+                    this.setState({
+                      svg: true,
+                      divStyle: {
+                        maxWidth: null,
+                        height: this.state.height.value,
+                        width: this.state.width
+                      }
+                    })
+
+                    function filter(node: any) {
+                      return (node.tagName !== 'i');
+                    }
+                    //@ts-ignore
+                    domtoimage.toSvg(document.getElementById('artboard'), { filter: filter })
+                      .then((data) => {
+                        saveAs(data, "HIRA.svg")
+                        this.setState({
+                          svg: false,
+                          divStyle: {
+                            maxWidth: 317,
+                            height: null,
+                            width: null
+                          }
+                        })
+                      }).catch((error) => {
+                        toast({
+                          title: "an error has occured",
+                          status: "error",
+                          isClosable: true,
+                        })
+                        console.error(error);
+                      });
                     toast({
                       title: "Downloading....",
-                      description: "Your download will start shortly " + this.state.width,
+                      description: "Your download will start shortly ",
                       status: "success",
                       duration: 5000,
                       position: "bottom-left",
