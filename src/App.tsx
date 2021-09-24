@@ -35,7 +35,7 @@ class Logo extends React.PureComponent {
     divStyle: {
       maxWidth: null,
       height: null,
-      width: null
+      width: null,
     },
     boxStyle: {
       maxHeight: null,
@@ -119,7 +119,7 @@ class Logo extends React.PureComponent {
                         </g>
                       </g>
                     </svg>
-                    <div style={{ color: this.state.color, fontFamily: "Garamond", fontWeight: "normal", fontSize: this.state.fontSize }} id="text">{this.state.text}</div>
+                    <div style={{ color: this.state.color, fontFamily: "Garamond", fontWeight: "normal", fontSize: this.state.fontSize, wordWrap: "initial" }} id="text">{this.state.text}</div>
                   </Flex>
                 </div>
               </Box>
@@ -136,7 +136,7 @@ class Logo extends React.PureComponent {
                 </Grid>
                 <Grid>
                   <Text fontSize="lg" textAlign="left">Caption</Text>
-                  <Input isRequired placeholder="Caption" size="md" onChange={(i) => this.handleInput("text", i)} />
+                  <Input maxLength={12} isRequired placeholder="Caption" size="md" onChange={(i) => this.handleInput("text", i)} />
                 </Grid>
               </VStack>
               <Stack direction="row" spacing={4}>
