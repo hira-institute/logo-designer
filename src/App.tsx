@@ -136,7 +136,7 @@ class Logo extends React.PureComponent {
                 </Grid>
                 <Grid>
                   <Text fontSize="lg" textAlign="left">Caption</Text>
-                  <Input maxLength={12} isRequired placeholder="Caption" size="md" onChange={(i) => this.handleInput("text", i)} />
+                  <Input disabled maxLength={12} isRequired placeholder="Coming Soon" size="md" onChange={(i) => this.handleInput("text", i)} />
                 </Grid>
               </VStack>
               <Stack direction="row" spacing={4}>
