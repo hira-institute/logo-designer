@@ -23,7 +23,7 @@ const toast = createStandaloneToast();
 class Logo extends React.PureComponent {
   state: any = {
     color: "#1b1b7a",
-    text: "",
+    text: "INSTITUTE",
     height: {
       value: 512,
       isInvalid: false,
@@ -219,10 +219,9 @@ class Logo extends React.PureComponent {
                     Caption
                   </Text>
                   <Input
-                    disabled
-                    maxLength={12}
+                    maxLength={10}
                     isRequired
-                    placeholder="Coming Soon"
+                    defaultValue="Institute"
                     size="md"
                     onChange={(i) => this.handleInput("text", i)}
                   />
